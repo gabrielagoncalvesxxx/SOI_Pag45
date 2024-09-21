@@ -1,0 +1,84 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class AlgoritmoDoBanqueiroView extends JFrame {
+    private JTextField[] camposMaximo;
+    private JTextField[] camposAlocado;
+    private JTextField campoDisponivel;
+    private JTextArea areaResultado;
+    private JButton botaoVerificar;
+
+    public AlgoritmoDoBanqueiroView() {
+        setTitle("Algoritmo do Banqueiro");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+
+        JLabel labelMaximo = new JLabel("Máximo:");
+        labelMaximo.setBounds(10, 10, 100, 25);
+        add(labelMaximo);
+
+        JLabel labelAlocado = new JLabel("Alocado:");
+        labelAlocado.setBounds(10, 40, 100, 25);
+        add(labelAlocado);
+
+        camposMaximo = new JTextField[5];
+        camposAlocado = new JTextField[5];
+        for (int i = 0; i < 5; i++) {
+            camposMaximo[i] = new JTextField();
+            camposMaximo[i].setBounds(120 + i * 50, 10, 40, 25);
+            add(camposMaximo[i]);
+
+            camposAlocado[i] = new JTextField();
+            camposAlocado[i].setBounds(120 + i * 50, 40, 40, 25);
+            add(camposAlocado[i]);
+        }
+
+        JLabel labelDisponivel = new JLabel("Disponível:");
+        labelDisponivel.setBounds(10, 70, 100, 25);
+        add(labelDisponivel);
+
+        campoDisponivel = new JTextField();
+        campoDisponivel.setBounds(120, 70, 40, 25);
+        add(campoDisponivel);
+
+        botaoVerificar = new JButton("Verificar");
+        botaoVerificar.setBounds(10, 100, 100, 25);
+        add(botaoVerificar);
+
+        areaResultado = new JTextArea();
+        areaResultado.setBounds(10, 130, 360, 120);
+        add(areaResultado);
+
+        botaoVerificar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                verificarEstadoSeguro();
+            }
+        });
+    }
+
+    private void verificarEstadoSeguro() {
+        int[] maximo = new int[5];
+        int[] alocado = new int[5];
+        for (int i = 0; i < 5; i++) {
+            maximo[i] = Integer.parseInt(camposMaximo[i].getText());
+            alocado[i] = Integer.parseInt(camposAlocado[i].getText());
+        }
+        int disponivel = Integer.parseInt(campoDisponivel.getText());
+
+        AlgoritmoDoBanqueiro algoritmo = new AlgoritmoDoBanqueiro(5, maximo, alocado, disponivel);
+        String resultado = algoritmo.verificarEstadoSeguro();
+        areaResultado.setText(resultado);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new AlgoritmoDoBanqueiroView().setVisible(true);
+            }
+        });
+    }
+}
