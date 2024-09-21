@@ -1,0 +1,78 @@
+public class AlgoritmoRecursosMultiplos {
+    private int numProcessos;
+    private int numRecursos;
+    private int[][] maximo;
+    private int[][] alocado;
+    private int[][] necessidade;
+    private int[] disponivel;
+
+    public AlgoritmoRecursosMultiplos(int numProcessos, int numRecursos, int[][] maximo, int[][] alocado, int[] disponivel) {
+        this.numProcessos = numProcessos;
+        this.numRecursos = numRecursos;
+        this.maximo = maximo;
+        this.alocado = alocado;
+        this.disponivel = disponivel;
+        this.necessidade = new int[numProcessos][numRecursos];
+        calcularNecessidade();
+    }
+
+    private void calcularNecessidade() {
+        for (int i = 0; i < numProcessos; i++) {
+            for (int j = 0; j < numRecursos; j++) {
+                necessidade[i][j] = maximo[i][j] - alocado[i][j];
+            }
+        }
+    }
+
+    public String verificarEstadoSeguro() {
+        boolean[] finalizado = new boolean[numProcessos];
+        int[] sequenciaSegura = new int[numProcessos];
+        int[] disponivelCopia = disponivel.clone();
+        int contagem = 0;
+
+        while (contagem < numProcessos) {
+            boolean encontrado = false;
+            for (int i = 0; i < numProcessos; i++) {
+                if (!finalizado[i] && podeExecutar(i, disponivelCopia)) {
+                    for (int j = 0; j < numRecursos; j++) {
+                        disponivelCopia[j] += alocado[i][j];
+                    }
+                    sequenciaSegura[contagem++] = i;
+                    finalizado[i] = true;
+                    encontrado = true;
+                }
+            }
+            if (!encontrado) {
+                return "O sistema está em um estado inseguro.\nProcessos que podem rodar: " + processosQuePodemRodar(finalizado);
+            }
+        }
+
+        StringBuilder resultado = new StringBuilder("O sistema está em um estado seguro.\nA sequência segura é: ");
+        for (int i = 0; i < numProcessos; i++) {
+            resultado.append("P").append(sequenciaSegura[i]);
+            if (i != numProcessos - 1) {
+                resultado.append(" -> ");
+            }
+        }
+        return resultado.toString();
+    }
+
+    private boolean podeExecutar(int processo, int[] disponivel) {
+        for (int j = 0; j < numRecursos; j++) {
+            if (necessidade[processo][j] > disponivel[j]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String processosQuePodemRodar(boolean[] finalizado) {
+        StringBuilder processos = new StringBuilder();
+        for (int i = 0; i < numProcessos; i++) {
+            if (!finalizado[i]) {
+                processos.append("P").append(i).append(" ");
+            }
+        }
+        return processos.toString().trim();
+    }
+}
