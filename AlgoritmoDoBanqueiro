@@ -1,0 +1,53 @@
+public class AlgoritmoDoBanqueiro {
+    private int numProcessos;
+    private int[] maximo;
+    private int[] alocado;
+    private int[] necessidade;
+    private int disponivel;
+
+    public AlgoritmoDoBanqueiro(int numProcessos, int[] maximo, int[] alocado, int disponivel) {
+        this.numProcessos = numProcessos;
+        this.maximo = maximo;
+        this.alocado = alocado;
+        this.disponivel = disponivel;
+        this.necessidade = new int[numProcessos];
+        calcularNecessidade();
+    }
+
+    private void calcularNecessidade() {
+        for (int i = 0; i < numProcessos; i++) {
+            necessidade[i] = maximo[i] - alocado[i];
+        }
+    }
+
+    public String verificarEstadoSeguro() {
+        boolean[] finalizado = new boolean[numProcessos];
+        int[] sequenciaSegura = new int[numProcessos];
+        int contagem = 0;
+        int disponivelCopia = disponivel;
+
+        while (contagem < numProcessos) {
+            boolean encontrado = false;
+            for (int i = 0; i < numProcessos; i++) {
+                if (!finalizado[i] && necessidade[i] <= disponivelCopia) {
+                    disponivelCopia += alocado[i];
+                    sequenciaSegura[contagem++] = i;
+                    finalizado[i] = true;
+                    encontrado = true;
+                }
+            }
+            if (!encontrado) {
+                return "O sistema está em um estado inseguro.";
+            }
+        }
+
+        StringBuilder resultado = new StringBuilder("O sistema está em um estado seguro.\nA sequência segura é: ");
+        for (int i = 0; i < numProcessos; i++) {
+            resultado.append("P").append(sequenciaSegura[i]);
+            if (i != numProcessos - 1) {
+                resultado.append(" -> ");
+            }
+        }
+        return resultado.toString();
+    }
+}
