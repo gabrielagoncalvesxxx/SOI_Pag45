@@ -1,0 +1,94 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class AlgoritmoRecursosMultiplosView extends JFrame {
+    private JTextField[][] camposMaximo;
+    private JTextField[][] camposAlocado;
+    private JTextField[] campoDisponivel;
+    private JTextArea areaResultado;
+    private JButton botaoVerificar;
+
+    public AlgoritmoRecursosMultiplosView() {
+        setTitle("Algoritmo do Banqueiro para Múltiplos Recursos");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+
+        JLabel labelMaximo = new JLabel("Máximo:");
+        labelMaximo.setBounds(10, 10, 100, 25);
+        add(labelMaximo);
+
+        JLabel labelAlocado = new JLabel("Alocado:");
+        labelAlocado.setBounds(10, 70, 100, 25);
+        add(labelAlocado);
+
+        camposMaximo = new JTextField[5][4];
+        camposAlocado = new JTextField[5][4];
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 4; j++) {
+                camposMaximo[i][j] = new JTextField();
+                camposMaximo[i][j].setBounds(120 + j * 50, 10 + i * 30, 40, 25);
+                add(camposMaximo[i][j]);
+
+                camposAlocado[i][j] = new JTextField();
+                camposAlocado[i][j].setBounds(120 + j * 50, 70 + i * 30, 40, 25);
+                add(camposAlocado[i][j]);
+            }
+        }
+
+        JLabel labelDisponivel = new JLabel("Disponível:");
+        labelDisponivel.setBounds(10, 230, 100, 25);
+        add(labelDisponivel);
+
+        campoDisponivel = new JTextField[4];
+        for (int j = 0; j < 4; j++) {
+            campoDisponivel[j] = new JTextField();
+            campoDisponivel[j].setBounds(120 + j * 50, 230, 40, 25);
+            add(campoDisponivel[j]);
+        }
+
+        botaoVerificar = new JButton("Verificar");
+        botaoVerificar.setBounds(10, 270, 100, 25);
+        add(botaoVerificar);
+
+        areaResultado = new JTextArea();
+        areaResultado.setBounds(10, 310, 560, 50);
+        add(areaResultado);
+
+        botaoVerificar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                verificarEstadoSeguro();
+            }
+        });
+    }
+
+    private void verificarEstadoSeguro() {
+        int[][] maximo = new int[5][4];
+        int[][] alocado = new int[5][4];
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 4; j++) {
+                maximo[i][j] = Integer.parseInt(camposMaximo[i][j].getText());
+                alocado[i][j] = Integer.parseInt(camposAlocado[i][j].getText());
+            }
+        }
+        int[] disponivel = new int[4];
+        for (int j = 0; j < 4; j++) {
+            disponivel[j] = Integer.parseInt(campoDisponivel[j].getText());
+        }
+
+        AlgoritmoRecursosMultiplos algoritmo = new AlgoritmoRecursosMultiplos(5, 4, maximo, alocado, disponivel);
+        String resultado = algoritmo.verificarEstadoSeguro();
+        areaResultado.setText(resultado);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new AlgoritmoRecursosMultiplosView().setVisible(true);
+            }
+        });
+    }
+}
